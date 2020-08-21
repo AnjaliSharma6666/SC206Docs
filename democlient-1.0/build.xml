@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Tests Web service Demo Client">
+  <property file="build.properties" />
+  <property name="dir.stubs" value="stubs" />
+
+  <target name="ws:clean">
+    <delete dir="${dir.stubs}" />
+    <mkdir dir="${dir.stubs}" />
+  </target>
+
+  <target name="ws:generate" depends="ws:clean" description="Generates stubs for tests services">
+    <delete dir="./test/com/microfocus/silkcentral/webservices/tests/stubs" failonerror="false" />
+    <exec executable="wsimport">
+      <arg line=" -s ${dir.stubs} -Xnocompile -p com.microfocus.silkcentral.webservices.tests.stubs ${democlient.wsdl.root}/Services1.0/jaxws/tests?wsdl" />
+    </exec>
+    
+    <delete dir="./test/com/microfocus/silkcentral/webservices/requirements/stubs" failonerror="false" />
+    <exec executable="wsimport">
+      <arg line=" -s ${dir.stubs} -Xnocompile -p com.microfocus.silkcentral.webservices.requirements.stubs ${democlient.wsdl.root}/Services1.0/jaxws/requirements?wsdl" />
+    </exec>
+  </target>
+ 
+</project>

@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/**<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * (C) Copyright 2004 - 2019 Micro Focus or one of its affiliates.<a name="line.2"></a>
+<span class="sourceLineNo">003</span> */<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>package com.microfocus.silkcentral.democlient.gui;<a name="line.5"></a>
+<span class="sourceLineNo">006</span><a name="line.6"></a>
+<span class="sourceLineNo">007</span>import java.awt.BorderLayout;<a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.awt.Component;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.awt.GridLayout;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.awt.event.ActionEvent;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import java.awt.event.ActionListener;<a name="line.11"></a>
+<span class="sourceLineNo">012</span>import java.awt.event.ItemEvent;<a name="line.12"></a>
+<span class="sourceLineNo">013</span>import java.awt.event.ItemListener;<a name="line.13"></a>
+<span class="sourceLineNo">014</span>import java.util.Collection;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>import javax.swing.BorderFactory;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import javax.swing.DefaultComboBoxModel;<a name="line.17"></a>
+<span class="sourceLineNo">018</span>import javax.swing.JButton;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import javax.swing.JComboBox;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import javax.swing.JComponent;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import javax.swing.JFrame;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import javax.swing.JLabel;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import javax.swing.JPanel;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import javax.swing.JScrollPane;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import javax.swing.JTable;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import javax.swing.table.DefaultTableCellRenderer;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import javax.swing.table.DefaultTableModel;<a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28"></a>
+<span class="sourceLineNo">029</span>import com.microfocus.silkcentral.democlient.gui.utils.UITool;<a name="line.29"></a>
+<span class="sourceLineNo">030</span>import com.microfocus.silkcentral.democlient.webservice.TestPlanningHandler;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import com.microfocus.silkcentral.webservices.tests.stubs.PropertyMetaInfo;<a name="line.31"></a>
+<span class="sourceLineNo">032</span><a name="line.32"></a>
+<span class="sourceLineNo">033</span>/**<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * The AllPropertiesFrame window shows all properties, that are available through the test planning webservice.<a name="line.34"></a>
+<span class="sourceLineNo">035</span> */<a name="line.35"></a>
+<span class="sourceLineNo">036</span>public class AllPropertiesFrame extends JFrame {<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>  private static final long serialVersionUID = 1L;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>  private JComboBox propTypeIdCB;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>  private JComboBox nodeTypeIdCB;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>  private TestPlanningHandler planningHandler;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>  private DefaultTableModel tableModel;<a name="line.42"></a>
+<span class="sourceLineNo">043</span><a name="line.43"></a>
+<span class="sourceLineNo">044</span>  public AllPropertiesFrame(final TestPlanningHandler planningHandler) throws Exception {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    super("All Available Properties");<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    this.planningHandler = planningHandler;<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    tableModel = createTableModel();<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>    JLabel nodeTypeLb = new JLabel("NodeTypeId");<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    nodeTypeIdCB = new JComboBox(planningHandler.getNodeTypeIds().toArray());<a name="line.52"></a>
+<span class="sourceLineNo">053</span><a name="line.53"></a>
+<span class="sourceLineNo">054</span>    JLabel propertyTypeLb = new JLabel("PropertyTypeId");<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    propTypeIdCB = new JComboBox();<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    updatePropertyCB(planningHandler, nodeTypeIdCB, propTypeIdCB);<a name="line.56"></a>
+<span class="sourceLineNo">057</span><a name="line.57"></a>
+<span class="sourceLineNo">058</span>    nodeTypeIdCB.addItemListener(new ItemListener() {<a name="line.58"></a>
+<span class="sourceLineNo">059</span>      @Override<a name="line.59"></a>
+<span class="sourceLineNo">060</span>      public void itemStateChanged(ItemEvent e) {<a name="line.60"></a>
+<span class="sourceLineNo">061</span>        if (e.getStateChange() == ItemEvent.SELECTED) {<a name="line.61"></a>
+<span class="sourceLineNo">062</span>          updatePropertyCB(planningHandler, nodeTypeIdCB, propTypeIdCB);<a name="line.62"></a>
+<span class="sourceLineNo">063</span>          updateTable();<a name="line.63"></a>
+<span class="sourceLineNo">064</span>        }<a name="line.64"></a>
+<span class="sourceLineNo">065</span>      }<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    });<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    propTypeIdCB.addItemListener(new ItemListener() {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>      @Override<a name="line.70"></a>
+<span class="sourceLineNo">071</span>      public void itemStateChanged(ItemEvent e) {<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        if (e.getStateChange() == ItemEvent.SELECTED) {<a name="line.72"></a>
+<span class="sourceLineNo">073</span>          updateTable();<a name="line.73"></a>
+<span class="sourceLineNo">074</span>        }<a name="line.74"></a>
+<span class="sourceLineNo">075</span>      }<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    });<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>    JTable table = new JTable(tableModel);<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);<a name="line.79"></a>
+<span class="sourceLineNo">080</span>    table.getColumnModel().getColumn(0).setPreferredWidth(250);<a name="line.80"></a>
+<span class="sourceLineNo">081</span>    table.getColumnModel().getColumn(1).setPreferredWidth(110);<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    table.getColumnModel().getColumn(2).setPreferredWidth(140);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>    table.getColumnModel().getColumn(3).setPreferredWidth(100);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    table.getColumnModel().getColumn(4).setPreferredWidth(90);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    table.getColumnModel().getColumn(5).setPreferredWidth(70);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    table.getColumnModel().getColumn(6).setPreferredWidth(70);<a name="line.86"></a>
+<span class="sourceLineNo">087</span>    table.getColumnModel().getColumn(7).setPreferredWidth(70);<a name="line.87"></a>
+<span class="sourceLineNo">088</span>    table.getColumnModel().getColumn(8).setPreferredWidth(60);<a name="line.88"></a>
+<span class="sourceLineNo">089</span>    table.getColumnModel().getColumn(9).setPreferredWidth(95);<a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>    table.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>      @Override<a name="line.93"></a>
+<span class="sourceLineNo">094</span>      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>        JComponent comp = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);<a name="line.95"></a>
+<span class="sourceLineNo">096</span>        comp.setToolTipText((String) value);<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        return comp;<a name="line.97"></a>
+<span class="sourceLineNo">098</span>      }<a name="line.98"></a>
+<span class="sourceLineNo">099</span><a name="line.99"></a>
+<span class="sourceLineNo">100</span>    });<a name="line.100"></a>
+<span class="sourceLineNo">101</span><a name="line.101"></a>
+<span class="sourceLineNo">102</span>    JScrollPane tablePanel = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);<a name="line.102"></a>
+<span class="sourceLineNo">103</span><a name="line.103"></a>
+<span class="sourceLineNo">104</span>    updateTable();<a name="line.104"></a>
+<span class="sourceLineNo">105</span><a name="line.105"></a>
+<span class="sourceLineNo">106</span>    JPanel content = new JPanel(new BorderLayout(0, 4));<a name="line.106"></a>
+<span class="sourceLineNo">107</span>    content.setBorder(BorderFactory.createEmptyBorder(11, 11, 10, 10));<a name="line.107"></a>
+<span class="sourceLineNo">108</span><a name="line.108"></a>
+<span class="sourceLineNo">109</span>    JPanel panel = new JPanel(new GridLayout(2, 2));<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    panel.add(nodeTypeLb);<a name="line.110"></a>
+<span class="sourceLineNo">111</span>    panel.add(nodeTypeIdCB);<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    panel.add(propertyTypeLb);<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    panel.add(propTypeIdCB);<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>    JButton closeBtn = new JButton("Close");<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    closeBtn.addActionListener(new ActionListener() {<a name="line.116"></a>
+<span class="sourceLineNo">117</span>      @Override<a name="line.117"></a>
+<span class="sourceLineNo">118</span>      public void actionPerformed(ActionEvent e) {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>        setVisible(false);<a name="line.119"></a>
+<span class="sourceLineNo">120</span>        dispose();<a name="line.120"></a>
+<span class="sourceLineNo">121</span>      }<a name="line.121"></a>
+<span class="sourceLineNo">122</span>    });<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>    content.add(panel, BorderLayout.NORTH);<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    content.add(tablePanel, BorderLayout.CENTER);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>    content.add(UITool.createButtonsPane(closeBtn), BorderLayout.SOUTH);<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>    setContentPane(content);<a name="line.128"></a>
+<span class="sourceLineNo">129</span><a name="line.129"></a>
+<span class="sourceLineNo">130</span>    setSize(800, 500);<a name="line.130"></a>
+<span class="sourceLineNo">131</span>  }<a name="line.131"></a>
+<span class="sourceLineNo">132</span><a name="line.132"></a>
+<span class="sourceLineNo">133</span>  private DefaultTableModel createTableModel() {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>    return new DefaultTableModel(new String[] {"PropertyId", "PropertyTypeId", "Name", "Description", "defaultValue", "isEditable", "isMultiSelect",<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        "isOptional", "type", "typeLabel"}, 0) {<a name="line.135"></a>
+<span class="sourceLineNo">136</span>      @Override<a name="line.136"></a>
+<span class="sourceLineNo">137</span>      public boolean isCellEditable(int row, int column) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        return false;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>      }<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    };<a name="line.140"></a>
+<span class="sourceLineNo">141</span>  }<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>  private void updateTable() {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>    try {<a name="line.144"></a>
+<span class="sourceLineNo">145</span>      String nodeTypeId = (String) nodeTypeIdCB.getSelectedItem();<a name="line.145"></a>
+<span class="sourceLineNo">146</span>      String propTypeId = (String) propTypeIdCB.getSelectedItem();<a name="line.146"></a>
+<span class="sourceLineNo">147</span>      Collection&lt;PropertyMetaInfo&gt; propertyInfoColl = planningHandler.getPropertyInfo(nodeTypeId, propTypeId);<a name="line.147"></a>
+<span class="sourceLineNo">148</span>      tableModel.setRowCount(0);<a name="line.148"></a>
+<span class="sourceLineNo">149</span>      for (PropertyMetaInfo propInfo : propertyInfoColl) {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        tableModel.addRow(new Object[] {propInfo.getId(), propInfo.getPropertyTypeId(), propInfo.getName(), propInfo.getDescription(),<a name="line.150"></a>
+<span class="sourceLineNo">151</span>            propInfo.getDefaultValue(), propInfo.isIsEditable(), propInfo.isIsMultiSelect(), propInfo.isIsOptional(), propInfo.getType(),<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            propInfo.getTypeLabel()});<a name="line.152"></a>
+<span class="sourceLineNo">153</span>      }<a name="line.153"></a>
+<span class="sourceLineNo">154</span><a name="line.154"></a>
+<span class="sourceLineNo">155</span>    } catch (Exception e) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>      UITool.handleError(this, e);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>    }<a name="line.157"></a>
+<span class="sourceLineNo">158</span>  }<a name="line.158"></a>
+<span class="sourceLineNo">159</span><a name="line.159"></a>
+<span class="sourceLineNo">160</span>  private void updatePropertyCB(final TestPlanningHandler planningHandler, final JComboBox nodeTypeCB, final JComboBox propertyTypeCB) {<a name="line.160"></a>
+<span class="sourceLineNo">161</span>    String selectedItem = (String) nodeTypeCB.getSelectedItem();<a name="line.161"></a>
+<span class="sourceLineNo">162</span>    try {<a name="line.162"></a>
+<span class="sourceLineNo">163</span>      propertyTypeCB.setModel(new DefaultComboBoxModel(planningHandler.getPropertyTypeIds(selectedItem).toArray()));<a name="line.163"></a>
+<span class="sourceLineNo">164</span>    } catch (Exception ex) {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>      ex.printStackTrace();<a name="line.165"></a>
+<span class="sourceLineNo">166</span>    }<a name="line.166"></a>
+<span class="sourceLineNo">167</span>  }<a name="line.167"></a>
+<span class="sourceLineNo">168</span>}<a name="line.168"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
